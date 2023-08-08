@@ -1,0 +1,171 @@
+
+1.	Introduction
+
+Airbnb is a global leader in the sharing economy, a platform for hosts to rent out their unused homes to guests. While the platform has changed the way people travel, it has also created new challenges, one of which is fraudulent listings. Fraudulent listings on Airbnb can include inaccurate descriptions with inaccurate information and inadequate amenities, or even worse, such as listings in which the owner pays for the accommodation and doesn't provide it on time. These fraudulent behaviours not only affect guests' plans but also damage the platform's reputation. Identifying and preventing such fraudulent listings is therefore critical to company integrity and user trust.
+
+1.1.	 Dataset Used 
+
+The Airbnb Dataset  contains a variety of features related to Airbnb listings, such as host response rate, number of listings by host, property type, room type, number of people it can accommodate, number of bathrooms and bedrooms, price, minimum stay days length of stay, number of reviews, review ratings, and whether the listing is fraudulent. Each row in the dataset represents an individual listing on Airbnb. There dataset has 3585 observations and 21 variables.
+1.2.	Problem Statement and Objectives
+
+Problem Statement:
+The problem at hand is the prevalence of fraudulent listings on Airbnb, which poses significant challenges for the platform, impacting user experiences and damaging its reputation. These fraudulent behaviors range from inaccurate descriptions to cases where accommodations are paid for but not provided on time.
+
+Objectives:
+•	To conduct an exploratory data analysis of the Airbnb dataset, examining various features related to listings.
+•	To identify trends, patterns, and relationships within the data that are indicative of potential fraudulent listings.
+•	To understand the factors influencing the likelihood of listing fraud and assess potential risks.
+•	To develop predictive models that can accurately detect fraudulent listings and contribute to maintaining the integrity and trust of Airbnb's platform.
+
+Therefore, the purpose of our analysis was to explore the dataset, understand the characteristics of Airbnb listings, identify trends, and detect anomalies. Through in-depth exploratory data analysis, our goal is to reveal patterns and relationships in the data that help us understand the factors that influence the likelihood of listing fraud, as well as potential risks. These analyses will then be used to develop predictive models that accurately identify fraudulent listings and help Airbnb maintain the trust and security of its platform.
+
+2.	Exploratory Data Analysis
+
+2.1.	Handling Missing Values & Duplicates
+
+The Airbnb dataset was checked for missing values initially in the analysis. We found no missing or null values in the dataset, however, we found 36 rows of duplicate data. These rows were dropped which reduced the total rows from 3585 to 3549.
+
+ 
+Fig 1. Missing and Duplicate values
+
+2.2.	Analysis & Visualization
+
+In this stage of EDA, there are various techniques are used for analysis. 
+
+1.	First, use distribution analysis to draw histograms for each feature in the dataset to better visualize the distribution of the data. This helps to understand the spread of data across various functions. These histograms show the distribution of each feature, providing an understanding of the data spread. For instance, many of the listings only need to be occupied for a short period of time, and a large number of these listings only need to be booked for 1-2 days. 
+
+ 
+Fig 2. Distibution Analysis
+
+
+2.	Second, the correlation matrix is calculated to determine the relationship between the different numerical features.  With 3549 observations and 13 numerical variables (after changing 8 numerical variables to categorical which is explained in Feature Engineering), examining the correlation coefficients between the "fraud" variable and the others allows us to identify features with relatively strong relationships to "fraud". Notably, the "number_of_reviews" exhibits a positive correlation coefficient of 0.53, indicating a moderate positive relationship with fraud. This suggests that as the number of reviews increases, the likelihood of fraud tends to rise.
+ 
+Fig 3. Correlation Matrix
+
+3.	Furthermore, defining Outliers as values more than 3 standard deviations from the mean is based on a common rule in statistics known as the "three-sigma principle", and data deletion is selected due to the limited size of the dataset.  We replace these outliers with the median of the corresponding column, as the median is less sensitive to extreme values. Thus, the primary reason we decided against data replacement is the limited size of our dataset; removing a substantial portion might undermine the validity of prediction results.
+
+
+4.	For feature-target relationship analysis of numerical variables, box plots presented below are generated to visualize the relationship between selected features and the target variable fraud. Selected features include "price", "review score rating", "number of reviews" and "number of reviews per month". as they have the strongest correlation to fraud, except for price. Despite having a low correlation, "price" is still included as it is an important factor to consider when making an Airbnb purchase.
+
+In terms of "price", fraud listings have a slightly lower median price than non-fraud listings and the price range is narrower. This could imply that fraudsters tend to set modest prices to attract customers, rather than opting for very high or very low prices. However, it is noteworthy that "price" is not a significant predictor for fraud detection. Conversely, in the area of "review_scores_rating", non-fraud listings exhibit slightly higher median ratings than fraudulent ones, perhaps because real listings are more likely to receive positive feedback. Additionally, the “number_of_reviews" shows that fraud listings have a higher median number of reviews than non-fraud ones, possibly because scam listings tend to get more reviews by customers who would convey that the listing is fraudulent. Lastly, in regard to "reviews_per_month", fraud listings again have a higher median number of reviews per month due to the same reason. Overall, these factors intertwine to reveal some subtle differences between fraudulent and non-fraudulent listings. 
+
+ 
+Fig 4. Feature-Target Relationship Analysis
+
+5.	For categorical-variable analysis, we set an initial hypothesis of every categorical variable is important.  The city variable was excluded from the analysis primarily because City 2 represented the majority of cases, making the distribution variations of other cities negligible for the analysis. Additionally, this dataset focuses on Airbnb cases in Boston. To align with our perspective, we only considered City 2 in the subsequent data training step. Also, this dataset is for Airbnb cases in Boston city. 
+
+
+
+ 
+Figure 5. Fraud Distribution Across Cities: Exclusion Rationale
+
+
+ 
+Figure 6. Fraud Percentage Analysis by Category
+In the groupby sentence, we use this city variable to group and count the total amount of cases. We grouped data by fraud and each categorical variables except for city. For example, we consider the ‘host_identity_verified’ variable as a potentially significant indicator of fraudulent since the distribution of ‘percent_1’ is 10% higher in fraud than non-fraud. Based on this rationale, we selected other categorical variables with distribution variations that are significant to be retained for modelling. After this process, our refined hypothesis for categorical variables was: host_identity_verified, is_location_exact, instant_bookable, property_type and cancellation_policy are the most important categorical variables.
+
+6.	For the Fraud Distribution Analysis, the subsequent grid of countplots has been constructed, each emphasizing unique categorical variables. These plots demonstrate the distribution of categorical variables between fraud and non-fraud instances across individual features. One important observation is the clear imbalance between non-fraudulent and fraudulent cases in the distribution. This significant asymmetry can greatly impact the effectiveness of models that are trained using this data. Therefore, it is crucial to evaluate the models with a well-rounded perspective, considering the distributional imbalance. For instance, metrics like the F1 score, which balances both precision and recall, can offer a more comprehensive assessment of model performance in the presence of such uneven distributions.
+
+ 
+Figure 7. Fraud Distribution Analysis for Categorical Variables
+In conclusion, through exploratory data analysis, we identified trends and relationships between various features and the target variable "fraud" and addressed issues such as category imbalance. These insights are critical in guiding our next steps, which include constructing and evaluating predictive models for identifying fraudulent lists.
+
+
+3.	Feature Engineering 
+For feature Engineering:
+1.	In the analysis section, the "astype()" method has been applied to the DataFrame "df_numerical" enabling the conversion from numerical to categorical variables. This operation incorporates several key variables, namely "host_identity_verified", "is_location_exact", "instant_bookable", "property_type", "room_type", "bed_type", "cancellation_policy" and "city". The transformation contains all the categorical variables in the dataset. The categorical representation is more meaningful and interpretable for further data exploration and modelling, enhancing the model performance.  
+
+2.	In the model development section, Categorical Transformation (One-hot Encoding), Numerical Transformation (Standard Scaling) and Constructing Final Preprocessors are implemented. These are explained in detail in  Data Preprocessing in the next section.
+
+4.	Model Development 
+Till now, we have seen that the distribution of non-fraud and fraud is biased. This could influence the performance of trained models. We cannot solely rely on accuracy score, and we need to value metrics like f1, and roc curve. To improve the accuracy and precision on this dataset, we need to use cross-validation to calculate a more representative accuracy score. Also, we will use an ROC curve to monitor the prediction results when evaluating the model's performance with a rare positive class.
+For modelling, we decided to use:
+1. Gaussian NB Classifier
+2. K-Neighbours Classifier
+3. Logistic Regression
+We also considered Support Vector Machine but it works the best with well separated data, and this dataset has little separation as analyzed in the categorical and numerical analysis, therefore, SVM will not be used in this study.
+
+4.1.	Data Preprocessing
+
+1.	Defining Categorical and Numerical Columns: In this step, we establish the categorical and numerical columns that form the basis of our data analysis.
+2.	Creating Target Variable: We designate the target variable, 'fraud', which serves as the focal point of our prediction task.
+3.	Applying Categorical Transformation (One-Hot Encoding): We execute a one-hot encoding transformation on categorical features to convert them into binary vectors.
+4.	Implementing Numerical Transformation (Standard Scaling): We apply standard scaling to numerical features, ensuring they are standardized for consistent analysis.
+5.	Constructing Final Preprocessor: We construct a comprehensive preprocessor using a ColumnTransformer that encapsulates both categorical and numerical transformations. This prepares the data for subsequent stages of modelling.
+
+
+4.2.	Data Splitting
+
+1.	Train-Test Data Split: To ensure unbiased model evaluation, we divide our dataset into training and testing subsets using the train_test_split function. This allows us to assess our model's performance on unseen data. We allocate 80% of the data for training (X_train, y_train) and the remaining 20% for testing (X_test, y_test), with a fixed random seed (random_state=42) for reproducibility.
+2.	Data Transformation: To transform our feature data, we use the preprocessor defined earlier. Instead of fitting the preprocessor to each subset (x_train_transformed, x_test_transformed), we fit it to the entire dataset (df[cat_columns + num_columns]). This ensures consistent encoding and scaling across both subsets.
+3.	Encoding Categorical Features: We use the preprocessor's fitted transformation to encode categorical columns in the training and testing subsets. The encoded categorical columns are captured in encoded_columns.
+4.	Creating Feature Names: To retain interpretability, we merge encoded categorical columns with numerical columns to create a comprehensive list of features (all_feat).
+5.	Final Transformation: We apply the preprocessor transformation to the training and testing subsets separately, resulting in transformed DataFrames X_train_transformed and X_test_transformed. These transformed features are ready for model training and testing.
+
+By splitting our data, transforming features, and ensuring consistency in encoding and scaling, we set the stage for effective model development and evaluation.
+
+4.3.	Hyperparameter Tuning for Gaussian NB & K-Neighbours Classifier
+
+1.	Selecting Hyperparameters: We define parameter options for each model. For Gaussian Naive Bayes, we explore a range of var_smoothing values using a logarithmic scale. For K-Nearest Neighbors (KNN), we experiment with different numbers of neighbors (n_neighbors) and two weight options: 'uniform' and 'distance'.
+2.	Defining Model Instances: We establish instances of the models to be tuned: Gaussian Naive Bayes (nb) and K-Nearest Neighbors (knn).
+3.	Configuring GridSearchCV: We set up GridSearchCV for Gaussian Naive Bayes. This technique exhaustively searches through parameter combinations using 5-fold cross-validation. We employ the 'roc_auc' scoring metric to assess model performance.
+4.	Utilizing RandomizedSearchCV for KNN: Considering the substantial number of parameters for KNN, we opt for RandomizedSearchCV. This method performs a randomized search through the parameter space using 10-fold cross-validation.
+5.	Fitting the Models: We train the models using the training data transformed earlier: X_train_transformed and y_train. 
+6.	Extracting Best Parameters: The best parameters identified through hyperparameter tuning for both models. For Gaussian Naive Bayes, the optimal var_smoothing is found to be 1.0. For KNN, the optimal parameters are 'uniform' weights and 89 neighbors. Since randomized searching is used for KNN, the run-time result may vary.
+
+4.4.	Training and Cross-validation for Gaussian NB & K-Neighbours Classifier
+
+1.	Applying Best Parameters: We utilize the best parameters obtained from the hyperparameter tuning process to instantiate optimized models: Gaussian Naive Bayes (nb_best) and K-Nearest Neighbors (knn_best).
+2.	Conducting Cross-Validation: We perform cross-validation to comprehensively assess the models' performance. The cross_val_score function evaluates the models using 5-fold cross-validation, employing the 'roc_auc' scoring metric.
+3.	Output of Cross-Validation: The output showcases the cross-validation scores for both models. For Gaussian Naive Bayes, the scores are [0.86461043, 0.83887649, 0.80301339, 0.76930804, 0.84206182]. For K-Nearest Neighbors, the scores are [0.85525257 0.88061756 0.84255952 0.81045387 0.85106543].
+4.	These cross-validation scores indicate that both the model's ability to discriminate between classes varies across different folds of the data. The relatively consistent range of scores suggests that these models are generalizing reasonably well. However, there is some variability in performance, possibly indicating sensitivity to the data distribution in different folds.
+
+4.5.	Hyperparameter Tuning and Training for Logistic Regression
+
+1.	Defining a dictionary of potential hyperparameter values: A dictionary of hyperparameter options (params_log) is defined for logistic regression. These values encompass several aspects of the logistic regression model, including regularization type (penalty), regularization strength (C), intercept fitting (fit_intercept), optimization algorithm (solver), and elastic net mixing parameter (l1_ratio).
+2.	Utilizing RandomizedSearchCV: To facilitate this exploration, we employ RandomizedSearchCV. In this case, we perform 10-fold cross-validation and iterate through 15 combinations of hyperparameters. The scoring metric chosen is the F1 score, which strikes a balance between precision and recall, making it suitable for imbalanced classification tasks.
+3.	Fitting the Models: We train the model using the training data- X_train and y_train.
+4.	Extracting Best Parameters: The best parameters identified through hyperparameter tuning for our Logistic Regression model are {'solver': 'newton-cg', 'penalty': 'l2', 'l1_ratio': 1e-05, 'fit_intercept': True, 'C': 0.01}. The run-time results may vary since randomized searching is used.
+5.	Applying Best Parameters: We instantiate the model using the LogisticRegression class, passing the best hyperparameters as keyword arguments. The model is then trained on the training data (X_train and y_train). Subsequently, predictions are made on the test data (X_test) using the trained model.
+5.	Model Evaluation and Recommendation 
+
+The three classification models have been evaluated using performance metrics that include accuracy, precision, recall, and F1 score. The evaluation results for each model are tabulated below.
+
+	Naive Bayes Model 	K-Nearest Neighbors Model 	Logistic Regression Model 
+Confusion Matrix	[[535  6] [123  46]]
+	[[529  12] [116  53]]	[[525  16] [107  62]]
+Accuracy	0.8183098591549296
+	0.819718309859155	0.8267605633802817
+Precision	0.8846153846153846	0.8153846153846154	0.7948717948717948
+Recall	0.27218934911242604
+	0.3136094674556213	0.3668639053254438
+F1 Score	0.41628959276018096	0.45299145299145294	0.5020242914979757
+Figure 8. Evaluation Metrics
+
+While all three models maintain reasonably fair accuracy scores of above 80%, the Naïve Bayes and KNN models display similar performance with the very close accuracy scores of 81.83% and 81.97% respectively. The Logistic Regression model has the highest accuracy and sensitivity, roughly 82.68% and 36.69%, respectively. The Naïve Bayes and KNN models lag in recall scores, hence failing to identify as many true positives from the actual positives compared to the Logistic Regression model. Although the Naïve Bayes model has the highest precision score (88.46%), it requires a strong assumption about the independence of the features, which is not available in this dataset. Furthermore, precision may not be the most significant metric in fraud detection, excluding the Naïve Bayes model from consideration.
+
+Comparing the KNN model and the Logistic Regression model, although it has the lowest precision, its F1 score is closer to 1 than the KNN model. The F1 score, which considers both precision and recall, is an important metric when the dataset is imbalanced. With the highest F1 score of 50.20%, The Logistic Regression model provides a better balance between precision and recall.
+
+Given the primary objective of fraud detection, Airbnb should minimize False Negative (FN) predictions and correctly identify more positive instances. Consequently, the recall score assumes greater weight in the evaluation. A higher False Positive (FP) rate may be acceptable since non-fraudulent transactions are occasionally flagged as fraudulent to prevent potential fraud.
+
+Regarding the four metrics evaluated, the Logistic Regression model becomes the optimal choice for Airbnb's fraud detection needs. This conclusion finds further support in the accompanying ROC curve plot. The Logistic Regression model, represented by the orange line, shows the greatest area under the curve (AUC) of 0.878, indicating its best performance among the three models, as the perfect model has an AUC of 1. The KNN model, denoted by the green line, follows with an AUC of 0.871, and the Naïve Bayes model, represented by the red line, trails with the smallest AUC of 0.856.
+
+ 
+Figure 9. ROC Curve for Models
+
+
+ 
+Figure 10: Logistic Classification Model’s Coefficients
+
+In conclusion, the Logistic Regression model, characterized by the highest accuracy, recall, and F1 score, outperforms the other two models in fraud detection. Its ease of understanding, interpretability, and low computational expense for training and prediction make it a good choice in this fraudulent detection scenario based on the result of our modelling. The most significant coefficients are host-identity verified, cancellation polity, reviews per month, and is location exact. By focusing on these four major variables, Airbnb can improve their ability of distinguishing fraudulent, therefore, procure customer experience and enhance Airbnb's reputation. 
+
+Strengthening host identity verification should be a priority. Airbnb could introduce an advanced verification system such as providing multiple forms of government-issued identification, facial recognition selfie clips, and proof of property ownership or rental authorization. These strict measures would make it more challenging for scammers to create fake listings
+
+Cancellation policies are also an essential aspect to consider. Listings that have extremely flexible cancellation policies may raise concerns about potential fraud. Therefore, Airbnb ought to establish more stringent guidelines for creating cancellation policies and monitor closely any listings that differ drastically from these guidelines.
+
+Regularly monitoring and analyzing monthly reviews can help identify anomalies. For example, a sudden influx of positive reviews in a short period may indicate fraudulent activity. Airbnb should take stronger measures to verify the authenticity of reviews and track review patterns for each listing. It could also employ natural language processing (NLP) algorithms to detect fake or paid reviews based on the sentiment and patterns of the text.
+
+Listings with inaccurate location information can be a potential sign of fraud according to the modelling, despite it is the least significant among the four. Nonetheless, Airbnb should require hosts to verify the exact location of their property. If preferred by Airbnb, machine learning algorithms can be employed to automatically detect any significant deviations in the location details provided by hosts.
+
+In addition to refining these parameters, Airbnb should conduct regular audits of the detection system and incorporate feedback to improve the predictive accuracy of the model. Additionally, Airbnb could consider conducting user education campaigns focusing on host authentication, cancellation policies, monthly reviews, and location accuracy to develop an informed user base capable of spotting suspicious listings.
+
