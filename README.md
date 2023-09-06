@@ -1,2 +1,1 @@
-# schulich_data_science
-MBAN 6110 T (Data Science 1)
+Public Repository to capture all the work I have been doing to build my expertise a Data Scientist
